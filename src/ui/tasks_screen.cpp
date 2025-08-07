@@ -1,5 +1,7 @@
 #include <sstream>
 
+#include <M5Unified.hpp>
+
 #include "gui_config.hpp"
 #include "tasks_screen.hpp"
 #include <audio/dootdoot.hpp>
@@ -13,10 +15,35 @@ bool all_tasks_are_completed(Tasks& tasks);
 M5Canvas header(&M5.Lcd);
 LGFX_Button** buttons;
 
-void draw_tasks_screen(M5GFX& display, const AppConfig& config, const Tasks& tasks) {
-    build_header(display, config);
-    build_main(display, tasks);
-    draw_footer(display);
+void TasksScreen::on_enter() {
+
+    display->setEpdMode(epd_mode_t::epd_fastest);
+    M5.Lcd.clearDisplay();
+
+    // hack
+    // value of display was junk here, so just force it
+    display = &M5.Lcd;
+
+    Serial.println("Entering tasks screen.");
+    Serial.printf("There are %d tasks.\n", tasks->size());
+    Serial.printf("Display is %dx%d\n", display->width(), display->height());
+
+    build_header(*display, *config);
+    build_main(*display, *tasks);
+    draw_footer(*display);
+}
+
+void TasksScreen::bind(Tasks& tasks) {
+    this->tasks = &tasks;
+}
+
+void TasksScreen::on_loop() {
+
+    auto count = M5.Touch.getCount();
+    if (!!count) {
+        auto t = M5.Touch.getDetail();
+        handle_touch(t, *tasks);
+    }
 }
 
 void build_header(M5GFX& display, const AppConfig& config) {
@@ -161,20 +188,31 @@ void draw_footer(M5GFX& display) {
         oss << " (Charging)";
     }
 
-    std::ostringstream formatted_time;
-    formatted_time << time.date.year << "/" << time.date.month << time.date.date << " ";
-    formatted_time << time.time.hours << ":" << time.time.minutes << ":" << time.time.seconds;
+    // only prints `2000//` ?
+    // std::ostringstream formatted_time;
+    // formatted_time << "" << time.date.year << "/" << time.date.month << "/" << time.date.date << " " <<
+    // time.time.hours
+    //                << ":" << time.time.minutes << ":" << time.time.seconds;
+
+    char text2[64];
+    snprintf(text2, sizeof(text2), "%04d-%02d-%02d %02d:%02d:%02d", time.date.year, time.date.month, time.date.date,
+             time.time.hours, time.time.minutes, time.time.seconds);
+
+    const char* text1 = oss.str().c_str();
+
+    // Serial.println(isCharging);
+    // Serial.println(text1);
+    // Serial.println(text2);
 
     canvas.setFont(&fonts::FreeMonoBold9pt7b);
     canvas.setTextSize(1);
     canvas.setTextColor(COLOR_SHADE_1);
-    // canvas.setTextDatum(middle_left);
-    // canvas.drawString(oss.str().c_str(), 0 + margin, canvas.height() / 2);
+
     canvas.setCursor(0, 0);
     canvas.print(" ");
-    canvas.print(oss.str().c_str());
+    canvas.print(text1);
     canvas.print("    ");
-    canvas.print(formatted_time.str().c_str());
+    canvas.print(text2);
     canvas.println();
     canvas.print(" ");
     canvas.println(ticks);

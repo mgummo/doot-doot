@@ -2,7 +2,7 @@
 
 void play_doot_doot() {
 
-    Serial.println("doot - doot");
+    Serial.println("doot doot");
 
     M5.Speaker.setVolume(200);
 
