@@ -1,0 +1,24 @@
+{
+    "title": "Todo List",
+    "schedules": [
+        {
+            "title": "Example Schedule",
+            "recurrence": "weekdays",
+            "start-time": "06:00",
+            "tasks": [
+                {
+                    "title": "Get Dressed"
+                },
+                {
+                    "title": "Eat Breakfast"
+                },
+                {
+                    "title": "Brush Teeth"
+                },
+                {
+                    "title": "Clean Room"
+                }
+            ]
+        }
+    ]
+}

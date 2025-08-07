@@ -1,0 +1,43 @@
+# Top-most EditorConfig file
+root = true
+
+# All files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Tab and indent style
+indent_style = space
+indent_size = 4
+
+# C/C++ files
+[*.{c,cpp,h,hpp}]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+
+# PlatformIO INI file
+[platformio.ini]
+indent_style = space
+indent_size = 2
+
+# JSON (e.g. config files)
+[*.json]
+indent_style = space
+indent_size = 2
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+# Shell scripts, Makefiles
+[*.{sh,make}]
+indent_style = tab
+
+# Python files
+[*.py]
+indent_style = space
+indent_size = 4
